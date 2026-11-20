@@ -1,0 +1,66 @@
+name: Daily jobs
+on:
+  schedule:
+    - cron: "17 10 * * *" # every day, 10:17 UTC
+  workflow_dispatch: # run by hand from the Actions tab
+  push: # once when the collector itself changes
+    branches: [main]
+    paths: ["scripts/**", ".github/workflows/daily.yml"]
+
+permissions:
+  contents: write # publish the release and commit the run log
+
+concurrency:
+  group: daily-jobs
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install requests
+
+      - name: Read every employer's public job board
+        run: |
+          START=$(date +%s)
+          cd scripts && python scraper.py --source automated
+          echo "MINUTES=$(( ($(date +%s) - START) / 60 ))" >> "$GITHUB_ENV"
+
+      - name: Compress
+        run: |
+          gzip -c scripts/output/all_jobs.json > jobs.json.gz
+          cp scripts/output/metadata.json metadata.json
+          ls -la jobs.json.gz metadata.json
+
+      - name: Publish today's file as the latest release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="jobs-$(date -u +%Y%m%d-%H%M)"
+          JOBS=$(jq -r '.total_jobs' metadata.json)
+          gh release create "$TAG" jobs.json.gz metadata.json --title "Jobs $(date -u +%Y-%m-%d)" \
+            --notes "$JOBS open jobs. Download: releases/latest/download/jobs.json.gz"
+          # keep the newest 3 releases
+          gh release list --limit 100 --json tagName --jq '.[3:] | .[].tagName' | while read -r old; do
+            gh release delete "$old" --cleanup-tag -y
+          done
+
+      - name: Log the run (also keeps scheduled runs alive on this repository)
+        run: |
+          jq -nc --arg date "$(date -u +%Y-%m-%dT%H:%MZ)" --argjson minutes "$MINUTES" \
+            --argjson jobs "$(jq '.total_jobs' metadata.json)" --argjson companies "$(jq '. | length' scripts/output/active_companies.json)" \
+            --argjson bytes "$(stat -c %s jobs.json.gz)" \
+            '{date: $date, minutes: $minutes, jobs: $jobs, active_companies: $companies, gz_bytes: $bytes}' >> runs.jsonl
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add runs.jsonl data/join_company_ids.json
+          git diff --staged --quiet || git commit -m "Run $(date -u +%Y-%m-%d)"
+          git pull --rebase --autostash origin main
+          git push origin main
