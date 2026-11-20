@@ -8,7 +8,7 @@ daily for free, that each person's Vettra downloads and matches on their own lap
 | # | What | Done when |
 |---|---|---|
 | 1 | Collector: the MIT job-board-aggregator scraper (credited) + its company lists, run by a daily GitHub Actions workflow | a run finishes on GitHub |
-| 2 | Publish: `jobs.json.gz` + `metadata.json` as assets of a release; Vettra downloads `releases/latest/download/jobs.json.gz` | the link serves today's file |
+| 2 | Publish: `jobs.jsonl.gz` (one job per line, so a laptop can read it without loading it whole) + `metadata.json` as release assets; Vettra downloads `releases/latest/download/jobs.jsonl.gz` | the link serves today's file |
 | 3 | Vettra reads it: download once a day, keep jobs whose title fits the person's field pack and that are in the US, fetch descriptions for those only, then the usual verdict and matching | a teacher, a nurse and a chip designer get matches from it |
 | 4 | Our own company list: harvest Common Crawl's URL index for ATS addresses (the same method the aggregator used), so Vettra does not depend on lists licensed for non-commercial use only | lists in this repo come from our own harvest |
 

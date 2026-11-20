@@ -33,11 +33,12 @@ jobs:
           cd scripts && python scraper.py --source automated
           echo "MINUTES=$(( ($(date +%s) - START) / 60 ))" >> "$GITHUB_ENV"
 
-      - name: Compress
+      - name: Compress, one job per line (Vettra reads it line by line on a laptop, never the whole list at once)
         run: |
-          gzip -c scripts/output/all_jobs.json > jobs.json.gz
+          python -c "import json, gzip; f = gzip.open('jobs.jsonl.gz', 'wt', encoding='utf-8'); [f.write(json.dumps(j, ensure_ascii=False) + '
+') for j in json.load(open('scripts/output/all_jobs.json', encoding='utf-8'))]; f.close()"
           cp scripts/output/metadata.json metadata.json
-          ls -la jobs.json.gz metadata.json
+          ls -la jobs.jsonl.gz metadata.json
 
       - name: Publish today's file as the latest release
         env:
@@ -45,8 +46,8 @@ jobs:
         run: |
           TAG="jobs-$(date -u +%Y%m%d-%H%M)"
           JOBS=$(jq -r '.total_jobs' metadata.json)
-          gh release create "$TAG" jobs.json.gz metadata.json --title "Jobs $(date -u +%Y-%m-%d)" \
-            --notes "$JOBS open jobs. Download: releases/latest/download/jobs.json.gz"
+          gh release create "$TAG" jobs.jsonl.gz metadata.json --title "Jobs $(date -u +%Y-%m-%d)" \
+            --notes "$JOBS open jobs. Download: releases/latest/download/jobs.jsonl.gz"
           # keep the newest 3 releases
           gh release list --limit 100 --json tagName --jq '.[3:] | .[].tagName' | while read -r old; do
             gh release delete "$old" --cleanup-tag -y
@@ -56,7 +57,7 @@ jobs:
         run: |
           jq -nc --arg date "$(date -u +%Y-%m-%dT%H:%MZ)" --argjson minutes "$MINUTES" \
             --argjson jobs "$(jq '.total_jobs' metadata.json)" --argjson companies "$(jq '. | length' scripts/output/active_companies.json)" \
-            --argjson bytes "$(stat -c %s jobs.json.gz)" \
+            --argjson bytes "$(stat -c %s jobs.jsonl.gz)" \
             '{date: $date, minutes: $minutes, jobs: $jobs, active_companies: $companies, gz_bytes: $bytes}' >> runs.jsonl
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"

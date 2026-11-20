@@ -4,8 +4,8 @@ Open job postings from tens of thousands of employers, in every field, collected
 public job boards (Greenhouse, Lever, Ashby, Workday, iCIMS, Paylocity, BambooHR, Workable, Join) and published as one
 compressed file for the Vettra app.
 
-- Today's file: https://github.com/mirzamalikbaig/vettra-jobs/releases/latest/download/jobs.json.gz
-  (one JSON list; each job has title, company, location, url, ats and dates) and `metadata.json` next to it.
+- Today's file: https://github.com/mirzamalikbaig/vettra-jobs/releases/latest/download/jobs.jsonl.gz
+  (gzip, one JSON job per line: title, company, location, url, ats, dates) and `metadata.json` next to it.
 - Runs on GitHub Actions every day (`.github/workflows/daily.yml`); each run adds a line to `runs.jsonl`.
 - Only public job postings are here. No personal data: each person's resume, profile and applications stay on their
   own computer, where Vettra matches this file against them.
