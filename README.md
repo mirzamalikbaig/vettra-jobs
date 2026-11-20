@@ -1,4 +1,5 @@
 # vettra-jobs
+<!-- first run 2026-11-20: 50 min, 576,179 jobs, 32,563 companies, 25 MB -->
 
 Open job postings from tens of thousands of employers, in every field, collected once a day from the employers' own
 public job boards (Greenhouse, Lever, Ashby, Workday, iCIMS, Paylocity, BambooHR, Workable, Join) and published as one
