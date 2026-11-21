@@ -30,7 +30,9 @@ SYSTEMS = {
     "ashby": [("com,ashbyhq,jobs)/", r"//jobs\.ashbyhq\.com/([a-z0-9_.%-]+)")],
     "bamboohr": [("com,bamboohr,", r"//([a-z0-9-]+)\.bamboohr\.com/(?:careers|jobs)")],
     "icims": [("com,icims,", r"//careers-([a-z0-9-]+)\.icims\.com/")],
-    "workday": [("com,myworkdayjobs,", r"//([a-z0-9-]+)\.(wd\d+)\.myworkdayjobs\.com/(?:[a-z]{2}-[A-Z]{2}/)?([A-Za-z0-9_-]+)(?=[/?#&]|$)")],
+    "workday": [("com,myworkdayjobs,", r"//(?P<t>[a-z0-9-]+)\.(?P<w>wd\d+)\.myworkdayjobs\.com/(?:[a-z]{2}-[A-Z]{2}/)?(?P<s>[A-Za-z0-9_-]+)(?=[/?#&]|$)"),
+                # the same boards under Workday's other address: wd5.myworkdaysite.com/recruiting/<company>/<site>
+                ("com,myworkdaysite,", r"//(?P<w>wd\d+)\.myworkdaysite\.com/(?:[a-z]{2}-[A-Z]{2}/)?recruiting/(?P<t>[a-z0-9-]+)/(?P<s>[A-Za-z0-9_-]+)(?=[/?#&]|$)")],
     "paylocity": [("com,paylocity,recruiting)/recruiting/jobs/all/",
                    r"/Jobs/All/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:/([^/?#]+))?")],
 }
@@ -76,7 +78,7 @@ def company(system, url):
         if not m:
             continue
         if system == "workday":
-            tenant, wd, site = m.group(1).lower(), m.group(2).lower(), m.group(3)
+            tenant, wd, site = m.group("t").lower(), m.group("w").lower(), m.group("s")
             return None if site.lower() in NOT_COMPANY else "%s|%s|%s" % (tenant, wd, site)
         if system == "paylocity":
             return (m.group(1).lower(), urllib.parse.unquote(m.group(2) or "").replace("-", " ").strip())

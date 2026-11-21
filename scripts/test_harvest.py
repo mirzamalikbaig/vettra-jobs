@@ -13,6 +13,7 @@ cases = [
     ("workday", "https://nvidia.wd5.myworkdayjobs.com/en-US/NVIDIAExternalCareerSite/job/x", "nvidia|wd5|NVIDIAExternalCareerSite"),
     ("workday", "https://intel.wd1.myworkdayjobs.com/External", "intel|wd1|External"),
     ("workday", "https://intel.wd1.myworkdayjobs.com/robots.txt", None),
+    ("workday", "https://wd5.myworkdaysite.com/en-US/recruiting/nico/External/job/X", "nico|wd5|External"),
     ("paylocity", "https://recruiting.paylocity.com/Recruiting/Jobs/All/73b6525a-3273-48b3-b9d8-d6479233c61c/10-Design",
      ("73b6525a-3273-48b3-b9d8-d6479233c61c", "10 Design")),
 ]
