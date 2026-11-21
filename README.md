@@ -17,6 +17,11 @@ compressed file for the Vettra app.
 - The collector (`scripts/scraper.py`, `scripts/geolocation.py`) is from
   [job-board-aggregator](https://github.com/Riley-Dorrington/job-board-aggregator) by Riley Dorrington, MIT License
   (`LICENSE-job-board-aggregator`).
-- The company lists in `data/` come from the same project and are licensed CC BY-NC 4.0 (non-commercial use, credit
-  required). Vettra uses them for a free pilot; they are to be replaced by lists harvested by this project (PLAN.md,
-  stage 4) before any commercial use.
+- The company lists in `data/` come from the same project and are licensed
+  [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) by Riley Dorrington: non-commercial use only, credit
+  required; commercial use needs the author's permission. **Changes made here:** each daily run updates
+  `data/join_company_ids.json`, and the published `jobs.jsonl.gz` is built by reading the companies in these lists.
+- **Open licensing issue.** Being free does not by itself make a use non-commercial. Until it is resolved, these lists
+  are used only for the owner's own testing. Vettra is not distributed to anyone else, and is never run as a business,
+  with jobs found through these lists, until either the author grants permission in writing or the lists are replaced
+  by company lists this project builds itself (PLAN.md, stage 4).

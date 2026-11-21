@@ -14,8 +14,13 @@ daily for free, that each person's Vettra downloads and matches on their own lap
 
 ## Review: risks and decisions
 
-1. **Licenses.** Code is MIT: keep its LICENSE and credit. The company lists are CC BY-NC 4.0: fine for a free pilot,
-   not for a paid product. Stage 4 replaces them.
+1. **Licenses.** Code is MIT: keep its LICENSE and credit. The company lists are CC BY-NC 4.0 (upstream README:
+   "Commercial use of the datasets requires permission"). Corrected 2026-11-20: an earlier version of this plan called
+   them "fine for a free pilot". That was wrong. NonCommercial means not primarily intended for or directed towards
+   commercial advantage, and a free pilot of a planned product may not qualify. **Gate:** before Vettra goes to
+   anyone besides its owner (classmates' pilot included), either (a) written permission from the author, or (b) stage 4
+   done and the borrowed lists deleted from `data/`, the collector reading only our own lists. The published job file
+   is built from these lists too, so it falls under the same gate.
 2. **No personal data here.** This repository is public and holds only code and public job postings. Resumes, profiles
    and applications stay on each person's laptop; Vettra (private repository) only downloads from here.
 3. **Run time.** The aggregator's daily run takes about 53 minutes for 67k companies (its Actions history, 2026-11-19
