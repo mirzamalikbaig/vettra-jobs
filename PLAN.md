@@ -12,6 +12,13 @@ daily for free, that each person's Vettra downloads and matches on their own lap
 | 3 | Vettra reads it: download once a day, keep jobs whose title fits the person's field pack and that are in the US, fetch descriptions for those only, then the usual verdict and matching | a teacher, a nurse and a chip designer get matches from it |
 | 4 | Our own company list: harvest Common Crawl's URL index for ATS addresses (the same method the aggregator used), so Vettra does not depend on lists licensed for non-commercial use only | lists in this repo come from our own harvest |
 
+Stage 4 status (2026-11-20): `scripts/harvest.py` reads Common Crawl's index files directly (the CDX server times out),
+about 40 s per crawl; monthly workflow `harvest.yml`. After the 12 crawls Nov 2025 - Oct 2026, `data/own/` holds, as a share
+of the borrowed entries that can work: Ashby 97%, Paylocity 93%, Greenhouse 88%, BambooHR 88%, Workday 88% (5,159 borrowed
+Workday entries are malformed, e.g. "wd5|wd1|nico"), iCIMS 46%, Lever 6% (Common Crawl barely holds jobs.lever.co).
+Plus 1,400-3,000 companies per system the borrowed lists lack. Not switched yet: the scraper still reads the borrowed
+lists until the owner approves deleting them; Lever needs another source or the author's permission.
+
 ## Review: risks and decisions
 
 1. **Licenses.** Code is MIT: keep its LICENSE and credit. The company lists are CC BY-NC 4.0 (upstream README:

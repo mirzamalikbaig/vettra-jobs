@@ -1,0 +1,32 @@
+name: Monthly company harvest
+# Our own company lists from Common Crawl's newest crawls (scripts/harvest.py; PLAN.md stage 4). Common Crawl publishes
+# about once a month, so the 2 newest crawls each month overlap the last run; earlier finds are kept.
+on:
+  schedule:
+    - cron: "41 4 3 * *" # the 3rd of every month, 04:41 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write # commit data/own
+
+concurrency:
+  group: daily-jobs # never at the same time as the daily run, which reads these lists
+  cancel-in-progress: false
+
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python scripts/test_harvest.py && python scripts/harvest.py 2
+      - run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add data/own
+          git diff --staged --quiet || git commit -m "Harvest $(date -u +%Y-%m-%d)"
+          git pull --rebase --autostash origin main
+          git push origin main
